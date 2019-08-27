@@ -15,7 +15,7 @@ examples:
     usage:
       version: 2.1
       orbs:
-        coveralls: coveralls/coveralls@dev:0.0.4
+        coveralls: coveralls/coveralls@1.0.2
       jobs:
         build:
           docker:
