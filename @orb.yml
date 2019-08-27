@@ -1,0 +1,100 @@
+# This code is licensed from CircleCI to the user under the MIT license. See
+# https://circleci.com/orbs/registry/licensing for details.
+version: 2.1
+
+description: |
+  This Orb posts your test suite's LCOV coverage data to coveralls.io for analysis, change tracking, and notifications.
+  When running on Pull Request builds, a comment will be added to the PR with details about how coverage will be affected if merged.
+
+examples:
+  coveralls_parallel:
+    description: >
+      Coveralls parallel build.
+      First job uploads coverage, second job hits parallel complete webhook to finish the build.
+      Assuming COVERALLS_REPO_TOKEN is set in your enironment variables.
+    usage:
+      version: 2.1
+      orbs:
+        coveralls: coveralls/coveralls@dev:0.0.4
+      jobs:
+        build:
+          docker:
+            - image: circleci/node:chakracore-10.0.0
+
+          steps:
+            - checkout
+            - run:
+                name: Install and Make
+                command: 'npm install && make test-coverage'
+            - coveralls/upload:
+                parallel: true
+                flag_name: Unit Tests
+            - coveralls/upload:
+                parallel_finished: true
+      workflows:
+        coveralls:
+          jobs:
+            - build
+
+commands:
+  upload:
+    parameters:
+      path_to_lcov:
+        description: >
+          Local path to the lcov output file produced by your test suite.
+          An error will be thrown if the file can't be found. This is the file that will be sent to the Coveralls API.
+        type: string
+        default: ./coverage/lcov.info
+      token:
+        description: Your Coveralls Repo token. You can also define this in your Circle's Environment Variables as COVERALLS_REPO_TOKEN
+        type: string
+        default: ''
+      flag_name:
+        description: Options flag name of the job, e.g. "Unit Tests", "Integration Tests"
+        type: string
+        default: ''
+      parallel:
+        description: Set to true for parallel (or matrix) based steps, where multiple posts to Coveralls will be performed in the check.
+        type: boolean
+        default: false
+      parallel_finished:
+        description: Set to true in the last job, after the other parallel jobs steps have completed, this will send a webhook to Coveralls to set the build complete.
+        type: boolean
+        default: false
+      coveralls_endpoint:
+        description: >
+          Hostname and protocol (https://<host>). Specifies a Coveralls Enterprise hostname.
+          You can also define this in your Circle's Environment Variables as COVERALLS_ENDPOINT
+        type: string
+        default: 'https://coveralls.io'
+    steps:
+      - run:
+          name: Upload Coverage Result To Coveralls
+          command: |
+            if << parameters.parallel_finished >>; then
+              curl "<< parameters.coveralls_endpoint >>/webhook?repo_token=<< parameters.token >>" \
+                -d "payload[build_num]=$CIRCLE_BUILD_NUM&payload[status]=done"
+              exit 0;
+            fi
+
+            sudo npm install -g coveralls
+
+            if [ ! $COVERALLS_REPO_TOKEN ]; then
+              export COVERALLS_REPO_TOKEN=<< parameters.token >>
+            fi
+
+            export COVERALLS_ENDPOINT=<< parameters.coveralls_endpoint >>
+
+            export COVERALLS_FLAG_NAME="<< parameters.flag_name >>"
+
+            if << parameters.parallel >>; then
+              export COVERALLS_PARALLEL=true
+            fi
+
+            # check for lcov file presence:
+            if [ ! -r << parameters.path_to_lcov >> ]; then
+              echo "Please specify a valid 'path_to_lcov' parameter."
+              exit 1
+            fi
+
+            cat << parameters.path_to_lcov >> | coveralls --verbose
