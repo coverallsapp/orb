@@ -104,13 +104,13 @@ workflows:
 * Validate:
 
 ```bash
-circleci orb validate @orb.yml
+circleci orb validate orb.yml
 ```
 
 * Publish:
 
 ```bash
-circleci orb publish @orb.yml coveralls/coveralls@1.0.0
+circleci orb publish orb.yml coveralls/coveralls@1.0.0
 ```
 
 ## License
