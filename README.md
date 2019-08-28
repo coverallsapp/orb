@@ -9,6 +9,13 @@
 
 See the official [CircleCI documentation](https://circleci.com/docs/2.0/using-orbs/).
 
+## Commands
+
+* `coveralls/upload`
+
+See the parameter documentation here:
+https://circleci.com/orbs/registry/orb/coveralls/coveralls#commands
+
 ## Examples
 
 Each example below should be placed into `circle.yml` or `.circleci/config.yml` file
