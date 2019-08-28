@@ -15,7 +15,7 @@ Each example below should be placed into `circle.yml` or `.circleci/config.yml` 
 
 ### Simple
 
-Build and upload to Coveralls in single job.
+Build and upload to Coveralls in a single job.
 Demo: https://github.com/coverallsapp/actions-demo
 
 ```yaml
@@ -110,7 +110,7 @@ circleci orb validate orb.yml
 * Publish:
 
 ```bash
-circleci orb publish orb.yml coveralls/coveralls@1.0.0
+circleci orb publish orb.yml coveralls/coveralls@x.y.z
 ```
 
 ## License
