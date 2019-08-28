@@ -98,19 +98,19 @@ commands:
         type: string
         default: ./coverage/lcov.info
       token:
-        description: Your Coveralls Repo token. You can also define this in your Circle's Environment Variables as COVERALLS_REPO_TOKEN
+        description: Your Coveralls Repo token defined in your Circle's Environment Variables.
         type: env_var_name
         default: COVERALLS_REPO_TOKEN
       flag_name:
-        description: Options flag name of the job, e.g. "Unit Tests", "Integration Tests"
+        description: Options flag name of the job, e.g. "Unit Tests", "Integration Tests", etc.
         type: string
         default: ''
       parallel:
-        description: Set to true for parallel (or matrix) based steps, where multiple posts to Coveralls will be performed in the check.
+        description: Set to true for parallel jobs, where multiple posts to Coveralls will be performed before completing the build with `parallel_finished`.
         type: boolean
         default: false
       parallel_finished:
-        description: Set to true in the last job, after the other parallel jobs steps have completed, this will send a webhook to Coveralls to set the build complete.
+        description: Set to true in the final job, after the other parallel jobs steps have completed. This will send a webhook to Coveralls to set the build complete.
         type: boolean
         default: false
       coveralls_endpoint:
