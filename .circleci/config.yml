@@ -6,7 +6,7 @@ orbs:
 jobs:
   test:
     docker:
-      - image: circleci/node:10.0.0
+      - image: circleci/circleci-cli:latest
 
     steps:
       - checkout
