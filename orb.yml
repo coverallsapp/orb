@@ -14,7 +14,7 @@ examples:
       version: 2.1
 
       orbs:
-        coveralls: coveralls/coveralls@1.0.3
+        coveralls: coveralls/coveralls@x.y.z
 
       jobs:
         build:
@@ -39,7 +39,7 @@ examples:
       version: 2.1
 
       orbs:
-        coveralls: coveralls/coveralls@1.0.3
+        coveralls: coveralls/coveralls@x.y.z
 
       jobs:
         build-1:
