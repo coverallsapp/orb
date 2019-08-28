@@ -1,4 +1,4 @@
-# CircleCI Orb [![CircleCI Orb Version](https://img.shields.io/badge/endpoint.svg?url=https://badges.circleci.io/orb/coveralls/coverallshttps://circleci.com/orbs/registry/orb/coveralls/coveralls
+# Coveralls CircleCI Orb [![CircleCI Orb Version](https://img.shields.io/badge/endpoint.svg?url=https://badges.circleci.io/orb/coveralls/coveralls)](https://circleci.com/orbs/registry/orb/coveralls/coveralls)
 
 ## How to enable
 
