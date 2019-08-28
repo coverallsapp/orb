@@ -1,0 +1,18 @@
+version: 2.1
+
+jobs:
+  test:
+    docker:
+      - image: circleci/node:10.0.0
+
+    steps:
+      - checkout
+
+      - run:
+          name: Validate
+          command: ./test.sh
+
+workflows:
+  build:
+    jobs:
+      - test
