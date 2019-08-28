@@ -1,4 +1,4 @@
-# CircleCI Orb [![CircleCI Orb Version](https://img.shields.io/badge/endpoint.svg?url=https://badges.circleci.io/orb/coveralls/coverallshttps://circleci.com/orbs/registry/orb/coveralls/coveralls
+# CircleCI Orb [![CircleCI](https://circleci.com/gh/coverallsapp/orb.svg?style=svg)](https://circleci.com/gh/coverallsapp/orb) [![CircleCI Orb Version](https://img.shields.io/badge/endpoint.svg?url=https://badges.circleci.io/orb/coveralls/coverallshttps://circleci.com/orbs/registry/orb/coveralls/coveralls
 
 ## How to enable
 
@@ -22,7 +22,7 @@ Demo: https://github.com/coverallsapp/actions-demo
 version: 2.1
 
 orbs:
-  coveralls: coveralls/coveralls@1.0.3
+  coveralls: coveralls/coveralls@x.y.z
 
 jobs:
   build:
@@ -49,7 +49,7 @@ Demo: https://github.com/coverallsapp/actions-demo
 version: 2.1
 
 orbs:
-  coveralls: coveralls/coveralls@1.0.3
+  coveralls: coveralls/coveralls@x.y.z
 
 jobs:
   build-1:

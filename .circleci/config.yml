@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  orb-tools: circleci/orb-tools@8.27.4
+
 jobs:
   test:
     docker:
@@ -7,10 +10,7 @@ jobs:
 
     steps:
       - checkout
-
-      - run:
-          name: Validate
-          command: ./test.sh
+      - orb-tools/validate
 
 workflows:
   build:
