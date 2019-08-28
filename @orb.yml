@@ -1,40 +1,92 @@
-# This code is licensed from CircleCI to the user under the MIT license. See
-# https://circleci.com/orbs/registry/licensing for details.
 version: 2.1
 
 description: |
   This Orb posts your test suite's LCOV coverage data to coveralls.io for analysis, change tracking, and notifications.
   When running on Pull Request builds, a comment will be added to the PR with details about how coverage will be affected if merged.
+  https://github.com/coverallsapp/orb
 
 examples:
-  coveralls_parallel:
+  coveralls_simple:
     description: >
-      Coveralls parallel build.
-      First job uploads coverage, second job hits parallel complete webhook to finish the build.
-      Assuming COVERALLS_REPO_TOKEN is set in your enironment variables.
+      Build and upload to Coveralls in single job.
+      Demo: https://github.com/coverallsapp/actions-demo
     usage:
       version: 2.1
+
       orbs:
-        coveralls: coveralls/coveralls@1.0.2
+        coveralls: coveralls/coveralls@1.0.3
+
       jobs:
         build:
           docker:
-            - image: circleci/node:chakracore-10.0.0
+            - image: circleci/node:10.0.0
 
           steps:
             - checkout
+
             - run:
                 name: Install and Make
                 command: 'npm install && make test-coverage'
+
+            - coveralls/upload
+
+  coveralls_parallel:
+    description: >
+      Coveralls parallel build.
+      'build' jobs uploads coverage, then 'done' job hits parallel complete webhook to finish the build.
+      Demo: https://github.com/coverallsapp/actions-demo
+    usage:
+      version: 2.1
+
+      orbs:
+        coveralls: coveralls/coveralls@1.0.3
+
+      jobs:
+        build-1:
+          docker:
+            - image: circleci/node:10.0.0
+
+          steps:
+            - checkout
+
+            - run:
+                name: Install and Make 1
+                command: 'npm install && make test-coverage-1'
+
             - coveralls/upload:
                 parallel: true
-                flag_name: Unit Tests
+                flag_name: Test 1
+
+        build-2:
+          docker:
+            - image: circleci/node:10.0.0
+
+          steps:
+            - checkout
+
+            - run:
+                name: Install and Make 2
+                command: 'npm install && make test-coverage-2'
+
+            - coveralls/upload:
+                parallel: true
+                flag_name: Test 2
+
+        done:
+          docker:
+            - image: circleci/node:10.0.0
+
+          steps:
             - coveralls/upload:
                 parallel_finished: true
+
       workflows:
-        coveralls:
+        test_parallel_then_upload:
           jobs:
-            - build
+            - build-1
+            - build-2
+            - done:
+                requires: [build-1, build-2]
 
 commands:
   upload:
@@ -47,8 +99,8 @@ commands:
         default: ./coverage/lcov.info
       token:
         description: Your Coveralls Repo token. You can also define this in your Circle's Environment Variables as COVERALLS_REPO_TOKEN
-        type: string
-        default: ''
+        type: env_var_name
+        default: COVERALLS_REPO_TOKEN
       flag_name:
         description: Options flag name of the job, e.g. "Unit Tests", "Integration Tests"
         type: string
@@ -74,7 +126,7 @@ commands:
             if << parameters.parallel_finished >>; then
               curl "<< parameters.coveralls_endpoint >>/webhook?repo_token=<< parameters.token >>" \
                 -d "payload[build_num]=$CIRCLE_BUILD_NUM&payload[status]=done"
-              exit 0;
+              exit 0
             fi
 
             sudo npm install -g coveralls
