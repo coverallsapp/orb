@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   test:
     docker:
-      - image: circleci/node:10.0.0
+      - image: debian:stretch
 
     steps:
       - checkout
