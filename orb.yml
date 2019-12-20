@@ -101,6 +101,10 @@ commands:
         description: Your Coveralls Repo token defined in your Circle's Environment Variables.
         type: env_var_name
         default: COVERALLS_REPO_TOKEN
+      job_id:
+        description: An id that uniquely identifies the build job
+        type: env_var_name
+        default: CIRCLE_WORKFLOW_ID
       flag_name:
         description: Options flag name of the job, e.g. "Unit Tests", "Integration Tests", etc.
         type: string
@@ -123,9 +127,11 @@ commands:
       - run:
           name: Upload Coverage Result To Coveralls
           command: |
+            export COVERALLS_SERVICE_JOB_ID=$<< parameters.job_id >>
+
             if << parameters.parallel_finished >>; then
-              curl "<< parameters.coveralls_endpoint >>/webhook?repo_token=<< parameters.token >>" \
-                -d "payload[build_num]=$CIRCLE_BUILD_NUM&payload[status]=done"
+              curl "<< parameters.coveralls_endpoint >>/webhook?repo_token=$<< parameters.token >>" \
+                -d "payload[build_num]=$COVERALLS_SERVICE_JOB_ID&payload[status]=done"
               exit 0
             fi
 
