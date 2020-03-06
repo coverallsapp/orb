@@ -3,7 +3,10 @@ version: 2.1
 description: |
   This Orb posts your test suite's LCOV coverage data to coveralls.io for analysis, change tracking, and notifications.
   When running on Pull Request builds, a comment will be added to the PR with details about how coverage will be affected if merged.
-  https://github.com/coverallsapp/orb
+
+display:
+  source_url: https://github.com/coverallsapp/orb
+  home_url: https://coveralls.io/
 
 examples:
   coveralls_simple:
