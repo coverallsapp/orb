@@ -122,20 +122,24 @@ commands:
           You can also define this in your Circle's Environment Variables as COVERALLS_ENDPOINT
         type: string
         default: 'https://coveralls.io'
+      verbose:
+        description: Set to true for verbose output from the Coveralls API push.
+        type: boolean
+        default: false
     steps:
       - run:
           name: Upload Coverage Result To Coveralls
           command: |
             if << parameters.parallel_finished >>; then
-              curl "<< parameters.coveralls_endpoint >>/webhook?repo_token=<< parameters.token >>" \
-                -d "payload[build_num]=$CIRCLE_BUILD_NUM&payload[status]=done"
+              curl "<< parameters.coveralls_endpoint >>/webhook?repo_token=$<< parameters.token >>" \
+                -d "payload[build_num]=$CIRCLE_WORKFLOW_ID&payload[status]=done"
               exit 0
             fi
 
             sudo npm install -g coveralls
 
             if [ ! $COVERALLS_REPO_TOKEN ]; then
-              export COVERALLS_REPO_TOKEN=<< parameters.token >>
+              export COVERALLS_REPO_TOKEN=$<< parameters.token >>
             fi
 
             export COVERALLS_ENDPOINT=<< parameters.coveralls_endpoint >>
@@ -152,4 +156,8 @@ commands:
               exit 1
             fi
 
-            cat << parameters.path_to_lcov >> | coveralls --verbose
+            if << parameters.verbose >>; then
+              cat << parameters.path_to_lcov >> | coveralls --verbose
+            else
+              cat << parameters.path_to_lcov >> | coveralls
+            fi
