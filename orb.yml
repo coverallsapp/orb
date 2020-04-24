@@ -121,7 +121,7 @@ commands:
           Hostname and protocol (https://<host>). Specifies a Coveralls Enterprise hostname.
           You can also define this in your Circle's Environment Variables as COVERALLS_ENDPOINT
         type: string
-        default: 'https://coveralls.io''
+        default: 'https://coveralls.io'
       verbose:
         description: Set to true for verbose output from the Coveralls API push.
         type: boolean
