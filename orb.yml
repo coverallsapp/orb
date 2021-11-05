@@ -132,7 +132,7 @@ commands:
           command: |
             if << parameters.parallel_finished >>; then
               curl "<< parameters.coveralls_endpoint >>/webhook?repo_token=$<< parameters.token >>" \
-                -d "payload[build_num]=$CIRCLE_WORKFLOW_ID&payload[status]=done"
+                -d "payload[build_num]=$CIRCLE_BUILD_NUM&payload[status]=done"
               exit 0
             fi
 
