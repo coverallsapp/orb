@@ -122,6 +122,10 @@ commands:
           You can also define this in your Circle's Environment Variables as COVERALLS_ENDPOINT
         type: string
         default: 'https://coveralls.io'
+      no_sudo_npm:
+        description: Set to true to disable use of sudo when running NPM as non-root.
+        type: boolean
+        default: false
       verbose:
         description: Set to true for verbose output from the Coveralls API push.
         type: boolean
@@ -136,7 +140,7 @@ commands:
               exit 0
             fi
 
-            if [[ $EUID == 0 ]]; then export SUDO=""; else export SUDO="sudo"; fi
+            if [[ $EUID == 0 ]] || << parameters.no_sudo_npm >>; then export SUDO=""; else export SUDO="sudo"; fi
 
             $SUDO npm install -g coveralls
 
