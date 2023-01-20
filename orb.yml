@@ -100,6 +100,10 @@ commands:
           An error will be thrown if the file can't be found. This is the file that will be sent to the Coveralls API.
         type: string
         default: ./coverage/lcov.info
+      filepath:
+        default: .
+        description: Defines the basepath of your source files referenced by coverage output.
+        type: string
       token:
         description: Your Coveralls Repo token defined in your Circle's Environment Variables.
         type: env_var_name
@@ -159,7 +163,7 @@ commands:
             fi
 
             if << parameters.verbose >>; then
-              cat << parameters.path_to_lcov >> | coveralls --verbose
+              cat << parameters.path_to_lcov >> | coveralls --verbose << parameters.filepath >>
             else
-              cat << parameters.path_to_lcov >> | coveralls
+              cat << parameters.path_to_lcov >> | coveralls << parameters.filepath >>
             fi
