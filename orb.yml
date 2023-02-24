@@ -58,7 +58,7 @@ examples:
 
             - coveralls/upload:
                 parallel: true
-                flag_name: Test 1
+                flag_name: job1
 
         build-2:
           docker:
@@ -73,7 +73,7 @@ examples:
 
             - coveralls/upload:
                 parallel: true
-                flag_name: Test 2
+                flag_name: job2
 
         done:
           docker:
@@ -82,6 +82,7 @@ examples:
           steps:
             - coveralls/upload:
                 parallel_finished: true
+                carryforward: 'job1,job2'
 
       workflows:
         test_parallel_then_upload:
@@ -126,12 +127,16 @@ commands:
         description: Set to true for verbose output from the Coveralls API push.
         type: boolean
         default: false
+      carryforward:
+        description: References for jobs to carry-forward from previous builds (if missing).
+        type: string
+        default: ''
     steps:
       - run:
           name: Upload Coverage Result To Coveralls
           command: |
             if << parameters.parallel_finished >>; then
-              curl "<< parameters.coveralls_endpoint >>/webhook?repo_token=$<< parameters.token >>" \
+              curl "<< parameters.coveralls_endpoint >>/webhook?repo_token=$<< parameters.token >>&carryforward=<< parameters.carryforward >>" \
                 -d "payload[build_num]=$CIRCLE_WORKFLOW_ID&payload[status]=done"
               exit 0
             fi
