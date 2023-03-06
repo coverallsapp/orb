@@ -75,43 +75,13 @@ commands:
     steps:
       - run:
           name: Upload Coverage Result To Coveralls
-          command: |
-            if << parameters.parallel_finished >>; then
-              curl "<< parameters.coveralls_endpoint >>"\
-                   "/webhook?repo_token=$<< parameters.token >>&"\
-                   "carryforward=<< parameters.carryforward >>" \
-                -d "payload[build_num]=$CIRCLE_WORKFLOW_ID&payload[status]=done"
-              exit 0
-            fi
-
-            if [[ $EUID == 0 ]]; then
-              export SUDO=""
-            else
-              export SUDO="sudo"
-            fi
-
-            $SUDO npm install -g coveralls
-
-            if [ ! $COVERALLS_REPO_TOKEN ]; then
-              export COVERALLS_REPO_TOKEN=$<< parameters.token >>
-            fi
-
-            export COVERALLS_ENDPOINT=<< parameters.coveralls_endpoint >>
-
-            export COVERALLS_FLAG_NAME="<< parameters.flag_name >>"
-
-            if << parameters.parallel >>; then
-              export COVERALLS_PARALLEL=true
-            fi
-
-            # check for lcov file presence:
-            if [ ! -r << parameters.path_to_lcov >> ]; then
-              echo "Please specify a valid 'path_to_lcov' parameter."
-              exit 1
-            fi
-
-            if << parameters.verbose >>; then
-              cat << parameters.path_to_lcov >> | coveralls --verbose
-            else
-              cat << parameters.path_to_lcov >> | coveralls
-            fi
+          environment:
+            COVERALLS_ENDPOINT: << parameters.coveralls_endpoint >>
+            COVERALLS_DONE: << parameters.parallel_finished >>
+            COVERALLS_REPO_TOKEN_ENV: << parameters.token >>
+            COVERALLS_VERBOSE: << parameters.verbose >>
+            COVERALLS_COVERAGE_FILE: << parameters.path_to_lcov >>
+            COVERALLS_CARRYFORWARD_FLAGS: << parameters.carryforward >>
+            COVERALLS_FLAG_NAME: << parameters.flag_name >>
+            COVERALLS_PARALLEL: << parameters.parallel >>
+          command: <<include(scripts/coveralls.sh)>>
