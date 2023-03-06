@@ -1,8 +1,11 @@
+---
 version: 2.1
 
-description: |
-  This Orb posts your test suite's LCOV coverage data to coveralls.io for analysis, change tracking, and notifications.
-  When running on Pull Request builds, a comment will be added to the PR with details about how coverage will be affected if merged.
+description: >
+  This Orb posts your test suite's LCOV coverage data to coveralls.io for
+  analysis, change tracking, and notifications. When running on Pull Request
+  builds, a comment will be added to the PR with details about how coverage
+  will be affected if merged.
 
 display:
   source_url: https://github.com/coverallsapp/orb
@@ -35,8 +38,8 @@ examples:
 
   coveralls_parallel:
     description: >
-      Coveralls parallel build.
-      'build' jobs uploads coverage, then 'done' job hits parallel complete webhook to finish the build.
+      Coveralls parallel build. 'build' jobs uploads coverage, then 'done' job
+      hits parallel complete webhook to finish the build.
       Demo: https://github.com/coverallsapp/actions-demo
     usage:
       version: 2.1
@@ -104,29 +107,42 @@ commands:
       path_to_lcov:
         description: >
           Local path to the lcov output file produced by your test suite.
-          An error will be thrown if the file can't be found. This is the file that will be sent to the Coveralls API.
+          An error will be thrown if the file can't be found.
+          This is the file that will be sent to the Coveralls API.
         type: string
         default: ./coverage/lcov.info
       token:
-        description: Your Coveralls Repo token defined in your Circle's Environment Variables.
+        description: >
+          Your Coveralls Repo token defined in your Circle's Environment
+          Variables.
         type: env_var_name
         default: COVERALLS_REPO_TOKEN
       flag_name:
-        description: Options flag name of the job, e.g. "Unit Tests", "Integration Tests", etc.
+        description: >
+          Options flag name of the job, e.g. "Unit Tests", "Integration Tests",
+          etc.
         type: string
         default: ''
       parallel:
-        description: Set to true for parallel jobs, where multiple posts to Coveralls will be performed before completing the build with `parallel_finished`.
+        description: >
+          Set to true for parallel jobs, where multiple posts to Coveralls
+          will be performed before completing the build with
+          `parallel_finished`.
         type: boolean
         default: false
       parallel_finished:
-        description: Set to true in the final job, after the other parallel jobs steps have completed. This will send a webhook to Coveralls to set the build complete.
+        description: >
+          Set to true in the final job, after the other parallel jobs steps
+          have completed. This will send a webhook to Coveralls to set the
+          build complete.
         type: boolean
         default: false
       coveralls_endpoint:
         description: >
-          Hostname and protocol (https://<host>). Specifies a Coveralls Enterprise hostname.
-          You can also define this in your Circle's Environment Variables as COVERALLS_ENDPOINT
+          Hostname and protocol (https://<host>).
+          Specifies a Coveralls Enterprise hostname.
+          You can also define this in your Circle's Environment Variables as
+          COVERALLS_ENDPOINT
         type: string
         default: 'https://coveralls.io'
       verbose:
@@ -134,7 +150,9 @@ commands:
         type: boolean
         default: false
       carryforward:
-        description: References for jobs to carry-forward from previous builds (if missing).
+        description: >
+          References for jobs to carry-forward from previous builds
+          (if missing).
         type: string
         default: ''
     steps:
@@ -142,12 +160,18 @@ commands:
           name: Upload Coverage Result To Coveralls
           command: |
             if << parameters.parallel_finished >>; then
-              curl "<< parameters.coveralls_endpoint >>/webhook?repo_token=$<< parameters.token >>&carryforward=<< parameters.carryforward >>" \
+              curl "<< parameters.coveralls_endpoint >>"\
+                   "/webhook?repo_token=$<< parameters.token >>&"\
+                   "carryforward=<< parameters.carryforward >>" \
                 -d "payload[build_num]=$CIRCLE_WORKFLOW_ID&payload[status]=done"
               exit 0
             fi
 
-            if [[ $EUID == 0 ]]; then export SUDO=""; else export SUDO="sudo"; fi
+            if [[ $EUID == 0 ]]; then
+              export SUDO=""
+            else
+              export SUDO="sudo"
+            fi
 
             $SUDO npm install -g coveralls
 
