@@ -111,6 +111,8 @@ workflows:
 * Validate:
 
 ```bash
+circleci orb pack ./src > orb.yml
+
 circleci orb validate orb.yml
 ```
 
