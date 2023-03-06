@@ -3,97 +3,14 @@ version: 2.1
 
 description: >
   This Orb posts your test suite's LCOV coverage data to coveralls.io for
-  analysis, change tracking, and notifications. When running on Pull Request
-  builds, a comment will be added to the PR with details about how coverage
-  will be affected if merged.
+  analysis, change tracking, and notifications.
+
+  When running on Pull Request builds, a comment will be added to the PR with
+  details about how coverage will be affected if merged.
 
 display:
   source_url: https://github.com/coverallsapp/orb
   home_url: https://coveralls.io/
-
-examples:
-  coveralls_simple:
-    description: >
-      Build and upload to Coveralls in single job.
-      Demo: https://github.com/coverallsapp/actions-demo
-    usage:
-      version: 2.1
-
-      orbs:
-        coveralls: coveralls/coveralls@x.y.z
-
-      jobs:
-        build:
-          docker:
-            - image: circleci/node:10.0.0
-
-          steps:
-            - checkout
-
-            - run:
-                name: Install and Make
-                command: 'npm install && make test-coverage'
-
-            - coveralls/upload
-
-  coveralls_parallel:
-    description: >
-      Coveralls parallel build. 'build' jobs uploads coverage, then 'done' job
-      hits parallel complete webhook to finish the build.
-      Demo: https://github.com/coverallsapp/actions-demo
-    usage:
-      version: 2.1
-
-      orbs:
-        coveralls: coveralls/coveralls@x.y.z
-
-      jobs:
-        build-1:
-          docker:
-            - image: circleci/node:10.0.0
-
-          steps:
-            - checkout
-
-            - run:
-                name: Install and Make 1
-                command: 'npm install && make test-coverage-1'
-
-            - coveralls/upload:
-                parallel: true
-                flag_name: job1
-
-        build-2:
-          docker:
-            - image: circleci/node:10.0.0
-
-          steps:
-            - checkout
-
-            - run:
-                name: Install and Make 2
-                command: 'npm install && make test-coverage-2'
-
-            - coveralls/upload:
-                parallel: true
-                flag_name: job2
-
-        done:
-          docker:
-            - image: circleci/node:10.0.0
-
-          steps:
-            - coveralls/upload:
-                parallel_finished: true
-                carryforward: 'job1,job2'
-
-      workflows:
-        test_parallel_then_upload:
-          jobs:
-            - build-1
-            - build-2
-            - done:
-                requires: [build-1, build-2]
 
 commands:
   greet:
