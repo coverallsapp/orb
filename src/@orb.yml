@@ -75,10 +75,6 @@ commands:
           (if missing).
         type: string
         default: ''
-      dry_run:
-        description: Don't send any requests
-        type: boolean
-        default: false
     steps:
       - run:
           name: Upload Coverage Result To Coveralls

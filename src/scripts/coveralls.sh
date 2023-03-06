@@ -1,23 +1,26 @@
 #!/bin/bash
 
-curl -sL https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-linux.tar.gz | tar -xz
+curl -sL https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-linux.tar.gz | tar xz
 
-args=""
-if [ "${COVERALLS_VERBOSE}" == "true" ]; then
+echo "Parsing args"
+if [ "${COVERALLS_VERBOSE}" == "1" ]; then
   args="${args} --debug"
 fi
 
-if [ "${COVERALLS_DRY_RUN}" == "true" ]; then
+echo Dry run - "${COVERALLS_DRY_RUN}"
+if [ "${COVERALLS_DRY_RUN}" == "1" ]; then
   args="${args} --dry-run"
 fi
 
-if [ ! "${COVERALLS_REPO_TOKEN}" ]; then
-  COVERALLS_REPO_TOKEN=$(printenv "${COVERALLS_REPO_TOKEN_ENV}") || (echo "Token not configured" && exit 1)
-  export COVERALLS_REPO_TOKEN
+if [ -z "${COVERALLS_REPO_TOKEN}" ]; then
+  # shellcheck disable=SC2155
+  export COVERALLS_REPO_TOKEN=$(printenv "${COVERALLS_REPO_TOKEN_ENV}")
 fi
 
 if [ "${COVERALLS_DONE}" == "1" ]; then
-  echo "Sending parallel finish webhook"
+  echo "Reporting parallel done"
+
+  set -x
 
   # shellcheck disable=SC2086
   ./coveralls --done ${args}
@@ -39,5 +42,8 @@ if [ -n "${COVERALLS_BASE_PATH}" ]; then
   args="${args} --base-path ${COVERALLS_BASE_PATH}"
 fi
 
+echo "Reporting coverage"
+
+set -x
 # shellcheck disable=SC2086
 ./coveralls $args
