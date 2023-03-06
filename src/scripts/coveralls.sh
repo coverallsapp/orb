@@ -3,11 +3,11 @@
 curl -sL https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-linux.tar.gz | tar -xz
 
 args=""
-if "${COVERALLS_VERBOSE}"; then
+if [ "${COVERALLS_VERBOSE}" == "true" ]; then
   args="${args} --debug"
 fi
 
-if "${COVERALLS_DRY_RUN}"; then
+if [ "${COVERALLS_DRY_RUN}" == "true" ]; then
   args="${args} --dry-run"
 fi
 
