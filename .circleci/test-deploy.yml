@@ -1,3 +1,4 @@
+---
 version: 2.1
 orbs:
   coveralls: coveralls/coveralls@dev:<<pipeline.git.revision>>
@@ -10,20 +11,19 @@ filters: &filters
 jobs:
   command-tests:
     docker:
-      - image: circleci/node:16.13.0
+      - image: cimg/base:current
     environment:
       COVERALLS_REPO_TOKEN: test-token
     steps:
       - checkout
-      # Run dummy jobs to make sure it works.
       - coveralls/upload:
           dry_run: true
-          parallel: true
-          path_to_lcov: ./src/@orb.yml
-
+          verbose: true
       - coveralls/upload:
           dry_run: true
+          verbose: true
           parallel_finished: true
+
 workflows:
   test-deploy:
     jobs:

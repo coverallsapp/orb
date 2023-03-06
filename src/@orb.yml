@@ -15,13 +15,13 @@ display:
 commands:
   upload:
     parameters:
-      path_to_lcov:
+      coverage_file:
         description: >
-          Local path to the lcov output file produced by your test suite.
+          Local path to the coverage output file produced by your test suite.
           An error will be thrown if the file can't be found.
           This is the file that will be sent to the Coveralls API.
         type: string
-        default: ./coverage/lcov.info
+        default: ''
       token:
         description: >
           Your Coveralls Repo token defined in your Circle's Environment
@@ -56,8 +56,17 @@ commands:
           COVERALLS_ENDPOINT
         type: string
         default: 'https://coveralls.io'
+      base_path:
+        description: >
+          Path to the root folder of the project the coverage was collected in.
+        type: string
+        default: ''
       verbose:
         description: Set to true for verbose output from the Coveralls API push.
+        type: boolean
+        default: false
+      dry_run:
+        description: Do not send anything but do the parsing
         type: boolean
         default: false
       carryforward:
@@ -76,9 +85,10 @@ commands:
           environment:
             COVERALLS_ENDPOINT: << parameters.coveralls_endpoint >>
             COVERALLS_DONE: << parameters.parallel_finished >>
+            COVERALLS_BASE_PATH: << parameters.base_path >>
             COVERALLS_REPO_TOKEN_ENV: << parameters.token >>
             COVERALLS_VERBOSE: << parameters.verbose >>
-            COVERALLS_COVERAGE_FILE: << parameters.path_to_lcov >>
+            COVERALLS_COVERAGE_FILE: << parameters.coverage_file >>
             COVERALLS_CARRYFORWARD_FLAGS: << parameters.carryforward >>
             COVERALLS_FLAG_NAME: << parameters.flag_name >>
             COVERALLS_PARALLEL: << parameters.parallel >>

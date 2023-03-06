@@ -1,5 +1,16 @@
 #!/bin/bash
 
+curl -sL https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-linux.tar.gz | tar -xz
+
+args=""
+if "${COVERALLS_VERBOSE}"; then
+  args="${args} --debug"
+fi
+
+if "${COVERALLS_DRY_RUN}"; then
+  args="${args} --dry-run"
+fi
+
 if [ ! "${COVERALLS_REPO_TOKEN}" ]; then
   COVERALLS_REPO_TOKEN=$(printenv "${COVERALLS_REPO_TOKEN_ENV}") || (echo "Token not configured" && exit 1)
   export COVERALLS_REPO_TOKEN
@@ -8,34 +19,25 @@ fi
 if [ "${COVERALLS_DONE}" == "1" ]; then
   echo "Sending parallel finish webhook"
 
-  [ "${COVERALLS_DRY_RUN}" == "1" ] && exit 0
-
-  curl "${COVERALLS_ENDPOINT}/webhook?repo_token=${COVERALLS_REPO_TOKEN}&carryforward=${COVERALLS_CARRYFORWARD_FLAGS}" \
-    -d "payload[build_num]=${CIRCLE_WORKFLOW_ID}&payload[status]=done"
+  # shellcheck disable=SC2086
+  ./coveralls --done ${args}
 
   exit 0
 fi
 
-if [[ $EUID == 0 ]]; then
-  export SUDO=""
-else
-  export SUDO="sudo"
+# Check for coverage file presence
+if [ -n "${COVERALLS_COVERAGE_FILE}" ]; then
+  if [ -r "${COVERALLS_COVERAGE_FILE}" ]; then
+    args="${args} --file ${COVERALLS_COVERAGE_FILE}"
+  else
+    echo "Please specify a valid 'coverage_file' parameter. File doesn't exist or is not readable."
+    exit 1
+  fi
 fi
 
-$SUDO npm install -g coveralls
-
-# check for lcov file presence:
-if [ ! -r "${COVERALLS_COVERAGE_FILE}" ]; then
-  echo "Please specify a valid 'path_to_lcov' parameter."
-  exit 1
+if [ -n "${COVERALLS_BASE_PATH}" ]; then
+  args="${args} --base-path ${COVERALLS_BASE_PATH}"
 fi
 
-echo "Processing coverage from ${COVERALLS_COVERAGE_FILE}"
-
-[ "${COVERALLS_DRY_RUN}" == "1" ] && exit 0
-
-if [ "${COVERALLS_VERBOSE}" == "1" ]; then
-  coveralls --verbose < "${COVERALLS_COVERAGE_FILE}"
-else
-  coveralls < "${COVERALLS_COVERAGE_FILE}"
-fi
+# shellcheck disable=SC2086
+./coveralls $args

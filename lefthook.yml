@@ -1,0 +1,11 @@
+---
+pre-commit:
+  parallel: true
+  commands:
+    yamllint:
+      glob: "*.yml"
+      exclude: '^.circleci|lefthook.yml'
+      run: yamllint {staged_files}
+    shellcheck:
+      glob: "*.sh"
+      run: shellcheck {staged_files}
