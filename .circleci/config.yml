@@ -23,13 +23,22 @@ workflows:
   #     - test
   lint-pack:
     jobs:
-      - orb-tools/validate:
+      - orb-tools/lint:
+          filters: *filters
+      - orb-tools/pack:
+          filters: *filters
+      - orb-tools/review:
+          filters: *filters
+      - shellcheck/check:
           filters: *filters
       - orb-tools/publish:
           orb-name: coveralls/coveralls
           vcs-type: << pipeline.project.type >>
           requires:
-            - orb-tools/validate
+            - orb-tools/lint
+            - orb-tools/pack
+            - orb-tools/review
+            - shellcheck/check
           # Use a context to hold your publishing token.
           context: publishing
           filters: *filters
