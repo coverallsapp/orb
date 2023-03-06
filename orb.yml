@@ -93,6 +93,12 @@ examples:
                 requires: [build-1, build-2]
 
 commands:
+  greet:
+    steps:
+      - run:
+          name: Greeting
+          command: echo 'Coveralls Orb'
+
   upload:
     parameters:
       path_to_lcov:
