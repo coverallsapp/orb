@@ -11,10 +11,18 @@ jobs:
   command-tests:
     docker:
       - image: cimg/base:current
+    environment:
+      COVERALLS_REPO_TOKEN: test-token
     steps:
       - checkout
       # Run dummy jobs to make sure it works.
-      - coveralls/greet
+      - coveralls/upload:
+          dry_run: true
+          parallel: true
+
+      - coveralls/upload:
+          dry_run: true
+          parallel_finished: true
 workflows:
   test-deploy:
     jobs:
