@@ -13,12 +13,6 @@ display:
   home_url: https://coveralls.io/
 
 commands:
-  greet:
-    steps:
-      - run:
-          name: Greeting
-          command: echo 'Coveralls Orb'
-
   upload:
     parameters:
       path_to_lcov:
@@ -72,6 +66,10 @@ commands:
           (if missing).
         type: string
         default: ''
+      dry_run:
+        description: Don't send any requests
+        type: boolean
+        default: false
     steps:
       - run:
           name: Upload Coverage Result To Coveralls
@@ -84,4 +82,5 @@ commands:
             COVERALLS_CARRYFORWARD_FLAGS: << parameters.carryforward >>
             COVERALLS_FLAG_NAME: << parameters.flag_name >>
             COVERALLS_PARALLEL: << parameters.parallel >>
+            COVERALLS_DRY_RUN: << parameters.dry_run >>
           command: <<include(scripts/coveralls.sh)>>
