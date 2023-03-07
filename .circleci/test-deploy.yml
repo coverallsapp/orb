@@ -10,7 +10,7 @@ filters: &filters
 jobs:
   command-tests:
     docker:
-      - image: cimg/base:current
+      - image: circleci/node:16.13.0
     environment:
       COVERALLS_REPO_TOKEN: test-token
     steps:
@@ -19,6 +19,7 @@ jobs:
       - coveralls/upload:
           dry_run: true
           parallel: true
+          path_to_lcov: ./src/@orb.yml
 
       - coveralls/upload:
           dry_run: true
