@@ -1,41 +1,49 @@
 #!/bin/bash
 
-if [ ! "${COVERALLS_REPO_TOKEN}" ]; then
-  COVERALLS_REPO_TOKEN=$(printenv "${COVERALLS_REPO_TOKEN_ENV}") || (echo "Token not configured" && exit 1)
-  export COVERALLS_REPO_TOKEN
+curl -sL https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-linux.tar.gz | tar xz
+
+echo "Parsing args"
+if [ "${COVERALLS_VERBOSE}" == "1" ]; then
+  args="${args} --debug"
+fi
+
+echo Dry run - "${COVERALLS_DRY_RUN}"
+if [ "${COVERALLS_DRY_RUN}" == "1" ]; then
+  args="${args} --dry-run"
+fi
+
+if [ -z "${COVERALLS_REPO_TOKEN}" ]; then
+  # shellcheck disable=SC2155
+  export COVERALLS_REPO_TOKEN=$(printenv "${COVERALLS_REPO_TOKEN_ENV}")
 fi
 
 if [ "${COVERALLS_DONE}" == "1" ]; then
-  echo "Sending parallel finish webhook"
+  echo "Reporting parallel done"
 
-  [ "${COVERALLS_DRY_RUN}" == "1" ] && exit 0
+  set -x
 
-  curl "${COVERALLS_ENDPOINT}/webhook?repo_token=${COVERALLS_REPO_TOKEN}&carryforward=${COVERALLS_CARRYFORWARD_FLAGS}" \
-    -d "payload[build_num]=${CIRCLE_WORKFLOW_ID}&payload[status]=done"
+  # shellcheck disable=SC2086
+  ./coveralls --done ${args}
 
   exit 0
 fi
 
-if [[ $EUID == 0 ]]; then
-  export SUDO=""
-else
-  export SUDO="sudo"
+# Check for coverage file presence
+if [ -n "${COVERALLS_COVERAGE_FILE}" ]; then
+  if [ -r "${COVERALLS_COVERAGE_FILE}" ]; then
+    args="${args} --file ${COVERALLS_COVERAGE_FILE}"
+  else
+    echo "Please specify a valid 'coverage_file' parameter. File doesn't exist or is not readable."
+    exit 1
+  fi
 fi
 
-$SUDO npm install -g coveralls
-
-# check for lcov file presence:
-if [ ! -r "${COVERALLS_COVERAGE_FILE}" ]; then
-  echo "Please specify a valid 'path_to_lcov' parameter."
-  exit 1
+if [ -n "${COVERALLS_BASE_PATH}" ]; then
+  args="${args} --base-path ${COVERALLS_BASE_PATH}"
 fi
 
-echo "Processing coverage from ${COVERALLS_COVERAGE_FILE}"
+echo "Reporting coverage"
 
-[ "${COVERALLS_DRY_RUN}" == "1" ] && exit 0
-
-if [ "${COVERALLS_VERBOSE}" == "1" ]; then
-  coveralls --verbose < "${COVERALLS_COVERAGE_FILE}"
-else
-  coveralls < "${COVERALLS_COVERAGE_FILE}"
-fi
+set -x
+# shellcheck disable=SC2086
+./coveralls $args
