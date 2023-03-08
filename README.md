@@ -16,14 +16,20 @@ See the official [CircleCI documentation](https://circleci.com/docs/2.0/using-or
 See the parameter documentation here:
 https://circleci.com/orbs/registry/orb/coveralls/coveralls#commands
 
+## Supported coverage formats
+
+See [**coverage-reporter**](https://github.com/coverallsapp/coverage-reporter#supported-coverage-file-types)
+
 ## Examples
 
-Each example below should be placed into `circle.yml` or `.circleci/config.yml` file
+Each example below should be placed into `circle.yml` or `.circleci/config.yml` file.
+
+Also see our [demo project](https://github.com/coverallsapp/coveralls-node-demo) with the setup.
 
 ### Simple
 
 Build and upload to Coveralls in a single job.
-Demo: https://github.com/coverallsapp/actions-demo
+Demo: https://github.com/coverallsapp/coveralls-node-demo
 
 ```yaml
 version: 2.1
@@ -50,7 +56,7 @@ jobs:
 
 Coveralls parallel build.
 'build' jobs uploads coverage, then 'done' job hits parallel complete webhook to finish the build.
-Demo: https://github.com/coverallsapp/actions-demo
+Demo: https://github.com/coverallsapp/coveralls-node-demo
 
 ```yaml
 version: 2.1
@@ -118,8 +124,11 @@ circleci orb validate orb.yml
 
 * Publish:
 
+Auto-publish with pushing a git tag:
+
 ```bash
-circleci orb publish orb.yml coveralls/coveralls@x.y.z
+git tag vX.Y.Z
+git push origin vX.Y.Z
 ```
 
 ## License

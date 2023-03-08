@@ -2,7 +2,7 @@
 version: 2.1
 
 description: >
-  This Orb posts your test suite's LCOV coverage data to coveralls.io for
+  This Orb posts your test suite's coverage data to coveralls.io for
   analysis, change tracking, and notifications.
 
   When running on Pull Request builds, a comment will be added to the PR with
