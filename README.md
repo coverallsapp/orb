@@ -18,7 +18,7 @@ https://circleci.com/orbs/registry/orb/coveralls/coveralls#commands
 
 ## Supported coverage formats
 
-See [**coverage-reporter**](https://github.com/coverallsapp/coverage-reporter#supported-coverage-file-types)
+See [**coverage-reporter**](https://github.com/coverallsapp/coverage-reporter#supported-coverage-report-formats)
 
 ## Examples
 
