@@ -22,6 +22,14 @@ commands:
           This is the file that will be sent to the Coveralls API.
         type: string
         default: ''
+      coverage_format:
+        description: >
+          Force coverage report format. If not specified coveralls will try
+          to determine the format automatically based on file extension and/or
+          content. Supported formats are - lcov, simplecov, cobertura, jacoco,
+          gcov, golang, python.
+        type: string
+        default: ''
       token:
         description: >
           Your Coveralls Repo token defined in your Circle's Environment
@@ -75,6 +83,17 @@ commands:
           (if missing).
         type: string
         default: ''
+      compare_ref:
+        description: >
+          Branch name to compare coverage with.
+          Specify if you want to always check coverage change for PRs
+          against one branch.
+        type: string
+        default: ''
+      compare_sha:
+        description: Commit SHA to compare coverage with.
+        type: string
+        default: ''
     steps:
       - run:
           name: Upload Coverage Result To Coveralls
@@ -89,4 +108,7 @@ commands:
             COVERALLS_FLAG_NAME: << parameters.flag_name >>
             COVERALLS_PARALLEL: << parameters.parallel >>
             COVERALLS_DRY_RUN: << parameters.dry_run >>
+            COVERALLS_COMPARE_REF: << parameters.compare_ref >>
+            COVERALLS_COMPARE_SHA: << parameters.compare_sha >>
+            COVERALLS_COVERAGE_FORMAT: << parameters.coverage_format >>
           command: <<include(scripts/coveralls.sh)>>

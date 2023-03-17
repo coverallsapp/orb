@@ -42,6 +42,10 @@ if [ -n "${COVERALLS_BASE_PATH}" ]; then
   args="${args} --base-path ${COVERALLS_BASE_PATH}"
 fi
 
+if [ -n "${COVERALLS_COVERAGE_FORMAT}" ]; then
+  args="${args} --format ${COVERALLS_COVERAGE_FORMAT}"
+fi
+
 echo "Reporting coverage"
 
 set -x
