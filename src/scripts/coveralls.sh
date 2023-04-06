@@ -28,6 +28,12 @@ if [ "${COVERALLS_DONE}" == "1" ]; then
   exit 0
 fi
 
+# CircleCI may coerce a boolean false value to 0, but the coverage reporter
+# expects the exact string "false"
+if [ "${COVERALLS_PARALLEL}" == "0" ]; then
+  COVERALLS_PARALLEL="false"
+fi
+
 # Check for coverage file presence
 if [ -n "${COVERALLS_COVERAGE_FILE}" ]; then
   if [ -r "${COVERALLS_COVERAGE_FILE}" ]; then
