@@ -111,4 +111,5 @@ commands:
             COVERALLS_COMPARE_REF: << parameters.compare_ref >>
             COVERALLS_COMPARE_SHA: << parameters.compare_sha >>
             COVERALLS_COVERAGE_FORMAT: << parameters.coverage_format >>
+            COVERALLS_SOURCE_HEADER: circleci-orb
           command: <<include(scripts/coveralls.sh)>>

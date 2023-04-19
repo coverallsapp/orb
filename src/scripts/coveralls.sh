@@ -1,6 +1,9 @@
 #!/bin/bash
 
-curl -sL https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-linux.tar.gz | tar xz
+curl -sLO https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-linux.tar.gz
+curl -sLO https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-checksums.txt
+grep coveralls-linux.tar.gz coveralls-checksums.txt | sha256sum --check
+tar -xzf coveralls-linux.tar.gz
 
 echo "Parsing args"
 if [ "${COVERALLS_VERBOSE}" == "1" ]; then
