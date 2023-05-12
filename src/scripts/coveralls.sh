@@ -33,11 +33,17 @@ fi
 
 # Check for coverage file presence
 if [ -n "${COVERALLS_COVERAGE_FILE}" ]; then
-  if [ -r "${COVERALLS_COVERAGE_FILE}" ]; then
-    args="${args} --file ${COVERALLS_COVERAGE_FILE}"
-  else
-    echo "Please specify a valid 'coverage_file' parameter. File doesn't exist or is not readable."
+  if [ ! -e "${COVERALLS_COVERAGE_FILE}" ]; then
+    echo "Please specify a valid 'coverage_file' parameter. File doesn't exist. Filename: ${COVERALLS_COVERAGE_FILE}"
     exit 1
+  elif [ ! -r "${COVERALLS_COVERAGE_FILE}" ]; then
+    echo "Please specify a valid 'coverage_file' parameter. File is not readable. Filename: ${COVERALLS_COVERAGE_FILE}"
+    exit 1
+  elif [ ! -f "${COVERALLS_COVERAGE_FILE}" ]; then
+    echo "Please specify a valid 'coverage_file' parameter. File specified is not a regular file. Filename: ${COVERALLS_COVERAGE_FILE}"
+    exit 1
+  else
+    args="${args} --file ${COVERALLS_COVERAGE_FILE}"
   fi
 fi
 
