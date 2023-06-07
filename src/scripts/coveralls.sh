@@ -26,26 +26,9 @@ if [ "${COVERALLS_DONE}" == "1" ]; then
   set -x
 
   # shellcheck disable=SC2086
-  ./coveralls --done ${args}
+  ./coveralls 'done' ${args}
 
   exit 0
-fi
-
-# Check for coverage file presence
-if [ -n "${COVERALLS_COVERAGE_FILE}" ]; then
-  _COVERALLS_COVERAGE_FILE="$(readlink -f "$COVERALLS_COVERAGE_FILE")"
-  if [ ! -e "${_COVERALLS_COVERAGE_FILE}" ]; then
-    echo "Please specify a valid 'coverage_file' parameter. File doesn't exist. Filename: ${COVERALLS_COVERAGE_FILE}"
-    exit 1
-  elif [ ! -r "${_COVERALLS_COVERAGE_FILE}" ]; then
-    echo "Please specify a valid 'coverage_file' parameter. File is not readable. Filename: ${COVERALLS_COVERAGE_FILE}"
-    exit 1
-  elif [ ! -f "${_COVERALLS_COVERAGE_FILE}" ]; then
-    echo "Please specify a valid 'coverage_file' parameter. File specified is not a regular file. Filename: ${COVERALLS_COVERAGE_FILE}"
-    exit 1
-  fi
-
-  args="${args} --file ${_COVERALLS_COVERAGE_FILE}"
 fi
 
 if [ -n "${COVERALLS_BASE_PATH}" ]; then
@@ -56,8 +39,25 @@ if [ -n "${COVERALLS_COVERAGE_FORMAT}" ]; then
   args="${args} --format ${COVERALLS_COVERAGE_FORMAT}"
 fi
 
+# Check for coverage file presence
+if [ -n "${COVERALLS_COVERAGE_FILE}" ]; then
+  coverage_file="$(readlink -f "$COVERALLS_COVERAGE_FILE")"
+  if [ ! -e "${coverage_file}" ]; then
+    echo "Please specify a valid 'coverage_file' parameter. File doesn't exist. Filename: ${COVERALLS_COVERAGE_FILE}"
+    exit 1
+  elif [ ! -r "${coverage_file}" ]; then
+    echo "Please specify a valid 'coverage_file' parameter. File is not readable. Filename: ${COVERALLS_COVERAGE_FILE}"
+    exit 1
+  elif [ ! -f "${coverage_file}" ]; then
+    echo "Please specify a valid 'coverage_file' parameter. File specified is not a regular file. Filename: ${COVERALLS_COVERAGE_FILE}"
+    exit 1
+  fi
+
+  args="${args} ${coverage_file}"
+fi
+
 echo "Reporting coverage"
 
 set -x
 # shellcheck disable=SC2086
-./coveralls $args
+./coveralls report $args
