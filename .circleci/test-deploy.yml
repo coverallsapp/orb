@@ -1,13 +1,10 @@
 ---
 version: 2.1
 orbs:
-  coveralls: coveralls/coveralls@dev:<<pipeline.git.revision>>
   orb-tools: circleci/orb-tools@11.5
-
 filters: &filters
   tags:
     only: /.*/
-
 jobs:
   command-tests:
     docker:
@@ -29,7 +26,6 @@ jobs:
           dry_run: true
           verbose: true
           parallel_finished: true
-
 workflows:
   test-deploy:
     jobs:
