@@ -20,6 +20,14 @@ if [ -z "${COVERALLS_REPO_TOKEN}" ]; then
   export COVERALLS_REPO_TOKEN=$(printenv "${COVERALLS_REPO_TOKEN_ENV}")
 fi
 
+if [ "${COVERALLS_MEASURE}" == "1" ]; then
+  args="${args} --measure"
+fi
+
+if [ "${COVERALLS_FAIL_ON_ERROR}" != "1" ]; then
+  args="${args} --no-fail"
+fi
+
 if [ "${COVERALLS_DONE}" == "1" ]; then
   echo "Reporting parallel done"
 
@@ -54,6 +62,10 @@ if [ -n "${COVERALLS_COVERAGE_FILE}" ]; then
   fi
 
   args="${args} ${coverage_file}"
+fi
+
+if [ -n "${COVERALLS_COVERAGE_FILES}" ]; then
+  args="${args} ${COVERALLS_COVERAGE_FILES}"
 fi
 
 echo "Reporting coverage"

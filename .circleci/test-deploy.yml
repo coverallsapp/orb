@@ -1,13 +1,10 @@
 ---
 version: 2.1
 orbs:
-  coveralls: coveralls/coveralls@dev:<<pipeline.git.revision>>
-  orb-tools: circleci/orb-tools@11.5
-
+  orb-tools: circleci/orb-tools@12.0.3
 filters: &filters
   tags:
     only: /.*/
-
 jobs:
   command-tests:
     docker:
@@ -19,16 +16,16 @@ jobs:
       - coveralls/upload:
           dry_run: true
           verbose: true
+          measure: true
       - coveralls/upload:
-          dry_run: true
           verbose: true
           parallel: true
           coverage_file: test/main.c.gcov
+          fail_on_error: false
       - coveralls/upload:
           dry_run: true
           verbose: true
           parallel_finished: true
-
 workflows:
   test-deploy:
     jobs:
@@ -38,9 +35,9 @@ workflows:
       - orb-tools/pack:
           filters: *filters
       - orb-tools/publish:
-          orb-name: coveralls/coveralls
-          vcs-type: << pipeline.project.type >>
-          pub-type: production
+          orb_name: coveralls/coveralls
+          vcs_type: << pipeline.project.type >>
+          pub_type: production
           requires:
             - orb-tools/pack
             - command-tests
