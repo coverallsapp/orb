@@ -22,6 +22,11 @@ commands:
           This is the file that will be sent to the Coveralls API.
         type: string
         default: ''
+      coverage_files:
+        description: >
+          Space-separated list of coverage reports to be uploaded.
+        type: string
+        default: ''
       coverage_format:
         description: >
           Force coverage report format. If not specified coveralls will try
@@ -94,6 +99,14 @@ commands:
         description: Commit SHA to compare coverage with.
         type: string
         default: ''
+      measure:
+        description: Enable time measurement logging
+        type: boolean
+        default: false
+      fail_on_error:
+        description: Whether to fail (exit code 1) on parsing or upload issues
+        type: boolean
+        default: true
     steps:
       - run:
           name: Upload Coverage Result To Coveralls
@@ -104,6 +117,7 @@ commands:
             COVERALLS_REPO_TOKEN_ENV: << parameters.token >>
             COVERALLS_VERBOSE: << parameters.verbose >>
             COVERALLS_COVERAGE_FILE: << parameters.coverage_file >>
+            COVERALLS_COVERAGE_FILES: << parameters.coverage_files >>
             COVERALLS_CARRYFORWARD_FLAGS: << parameters.carryforward >>
             COVERALLS_FLAG_NAME: << parameters.flag_name >>
             COVERALLS_PARALLEL: << parameters.parallel >>
@@ -111,5 +125,7 @@ commands:
             COVERALLS_COMPARE_REF: << parameters.compare_ref >>
             COVERALLS_COMPARE_SHA: << parameters.compare_sha >>
             COVERALLS_COVERAGE_FORMAT: << parameters.coverage_format >>
+            COVERALLS_MEASURE: << parameters.measure >>
+            COVERALLS_FAIL_ON_ERROR: << parameters.fail_on_error >>
             COVERALLS_SOURCE_HEADER: circleci-orb
           command: <<include(scripts/coveralls.sh)>>

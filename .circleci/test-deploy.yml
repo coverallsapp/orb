@@ -19,11 +19,12 @@ jobs:
       - coveralls/upload:
           dry_run: true
           verbose: true
+          measure: true
       - coveralls/upload:
-          dry_run: true
           verbose: true
           parallel: true
           coverage_file: test/main.c.gcov
+          fail_on_error: false
       - coveralls/upload:
           dry_run: true
           verbose: true
