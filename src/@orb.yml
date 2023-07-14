@@ -107,6 +107,11 @@ commands:
         description: Whether to fail (exit code 1) on parsing or upload issues
         type: boolean
         default: true
+      create_build:
+        description: >
+          Create a build on parallel_finished request if it doesn't exist
+        type: boolean
+        default: false
     steps:
       - run:
           name: Upload Coverage Result To Coveralls
@@ -127,5 +132,6 @@ commands:
             COVERALLS_COVERAGE_FORMAT: << parameters.coverage_format >>
             COVERALLS_MEASURE: << parameters.measure >>
             COVERALLS_FAIL_ON_ERROR: << parameters.fail_on_error >>
+            COVERALLS_CREATE_BUILD: << parameters.create_build >>
             COVERALLS_SOURCE_HEADER: circleci-orb
           command: <<include(scripts/coveralls.sh)>>

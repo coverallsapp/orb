@@ -31,6 +31,10 @@ fi
 if [ "${COVERALLS_DONE}" == "1" ]; then
   echo "Reporting parallel done"
 
+  if [ "${COVERALLS_CREATE_BUILD}" == "1" ]; then
+    args="${args} --create-build"
+  fi
+
   set -x
 
   # shellcheck disable=SC2086
