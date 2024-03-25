@@ -73,3 +73,10 @@ echo "Reporting coverage"
 set -x
 # shellcheck disable=SC2086
 ./coveralls report $args
+set +x
+
+exit_status=$?
+if [ "${COVERALLS_FAIL_ON_ERROR}" != "1" ]; then
+  exit_status=0
+fi
+exit "${exit_status}"
