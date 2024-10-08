@@ -1,17 +1,29 @@
 #!/bin/bash
 
-curl -sLO https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-linux.tar.gz
-curl -sLO https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-checksums.txt
-grep coveralls-linux.tar.gz coveralls-checksums.txt | sha256sum --check
-tar -xzf coveralls-linux.tar.gz
+# Download the Coveralls binary and verify the checksum
+if ! curl -sLO https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-linux.tar.gz ||
+   ! curl -sLO https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-checksums.txt ||
+   ! grep coveralls-linux.tar.gz coveralls-checksums.txt | sha256sum --check ||
+   ! tar -xzf coveralls-linux.tar.gz; then
+  echo "Failed to download or verify coveralls binary."
+  [ "${COVERALLS_FAIL_ON_ERROR}" != "1" ] && exit 0
+  exit 1
+fi
+
+# Ensure the binary exists before attempting to run it
+if [ ! -f ./coveralls ]; then
+  echo "Coveralls binary not found after extraction."
+  [ "${COVERALLS_FAIL_ON_ERROR}" != "1" ] && exit 0
+  exit 1
+fi
 
 echo "Parsing args"
 if [ "${COVERALLS_VERBOSE}" == "1" ]; then
   args="${args} --debug"
 fi
 
-echo Dry run - "${COVERALLS_DRY_RUN}"
 if [ "${COVERALLS_DRY_RUN}" == "1" ]; then
+  echo Dry run - "${COVERALLS_DRY_RUN}"
   args="${args} --dry-run"
 fi
 
@@ -34,7 +46,11 @@ if [ "${COVERALLS_DONE}" == "1" ]; then
   set -x
 
   # shellcheck disable=SC2086
-  ./coveralls 'done' ${args}
+  if ! ./coveralls 'done' ${args}; then
+    # If fail_on_error is not set to "1", override the exit status to 0
+    [ "${COVERALLS_FAIL_ON_ERROR}" != "1" ] && exit 0
+    exit 1
+  fi
 
   exit 0
 fi
@@ -69,7 +85,10 @@ if [ -n "${COVERALLS_COVERAGE_FILES}" ]; then
 fi
 
 echo "Reporting coverage"
-
 set -x
 # shellcheck disable=SC2086
-./coveralls report $args
+if ! ./coveralls report $args; then
+  # If fail_on_error is not set to "1", override the exit status to 0
+  [ "${COVERALLS_FAIL_ON_ERROR}" != "1" ] && exit 0
+  exit 1
+fi
