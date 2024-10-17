@@ -18,25 +18,21 @@ jobs:
     steps:
       - checkout
       - coveralls/upload:
-          name: Test default version
           dry_run: true
           verbose: true
           measure: true
       - coveralls/upload:
-          name: Test latest version
           dry_run: true
           verbose: true
           measure: true
           coverage_reporter_version: latest
       - coveralls/upload:
-          name: Test specific version
           verbose: true
           parallel: true
           coverage_file: test/main.c.gcov
           coverage_reporter_version: v0.6.9
           fail_on_error: false
       - coveralls/upload:
-          name: Test invalid version
           dry_run: true
           verbose: true
           coverage_reporter_version: invalid-version
@@ -59,7 +55,6 @@ jobs:
               exit 1
             fi
       - coveralls/upload:
-          name: Test parallel finished
           dry_run: true
           verbose: true
           parallel_finished: true
