@@ -75,7 +75,8 @@ commands:
         type: string
         default: ''
       verbose:
-        description: Set to true for debug output. Deprecated, use debug instead.
+        description: >
+        Set to true for debug output. Deprecated, use debug instead.
         type: boolean
         default: false
       debug:
