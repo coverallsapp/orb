@@ -116,7 +116,7 @@ commands:
           version.
     steps:
       - run:
-          name: Upload Coverage Result To Coveralls
+          name: Upload Coverage Results To Coveralls
           environment:
             COVERALLS_ENDPOINT: << parameters.coveralls_endpoint >>
             COVERALLS_DONE: << parameters.parallel_finished >>
@@ -136,4 +136,4 @@ commands:
             COVERALLS_FAIL_ON_ERROR: << parameters.fail_on_error >>
             COVERALLS_REPORTER_VERSION: << parameters.coverage_reporter_version >>  # yamllint disable-line rule:line-length
             COVERALLS_SOURCE_HEADER: circleci-orb
-          command: \<<include(scripts/coveralls.sh) \>>
+          command: <<include(scripts/coveralls.sh)>>
