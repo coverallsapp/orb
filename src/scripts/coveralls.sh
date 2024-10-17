@@ -1,8 +1,15 @@
 #!/bin/bash
 
+# Determine which version of coverage-reporter to download
+if [ -z "$COVERALLS_REPORTER_VERSION" ] || [ "$COVERALLS_REPORTER_VERSION" == "latest" ]; then
+  asset_path="latest/download"
+else
+  asset_path="download/${COVERALLS_REPORTER_VERSION}"
+fi
+
 # Download the Coveralls binary and verify the checksum
-if ! curl -sLO https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-linux.tar.gz ||
-   ! curl -sLO https://github.com/coverallsapp/coverage-reporter/releases/latest/download/coveralls-checksums.txt ||
+if ! curl -sLO "https://github.com/coverallsapp/coverage-reporter/releases/${asset_path}/coveralls-linux.tar.gz" ||
+   ! curl -sLO "https://github.com/coverallsapp/coverage-reporter/releases/${asset_path}/coveralls-checksums.txt" ||
    ! grep coveralls-linux.tar.gz coveralls-checksums.txt | sha256sum --check ||
    ! tar -xzf coveralls-linux.tar.gz; then
   echo "Failed to download or verify coveralls binary."
@@ -16,6 +23,10 @@ if [ ! -f ./coveralls ]; then
   [ "${COVERALLS_FAIL_ON_ERROR}" != "1" ] && exit 0
   exit 1
 fi
+
+# Output the version of the installed coverage reporter
+echo "Installed coverage reporter version:"
+./coveralls --version || echo "Failed to retrieve version"
 
 echo "Parsing args"
 if [ "${COVERALLS_VERBOSE}" == "1" ]; then

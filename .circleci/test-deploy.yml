@@ -14,15 +14,48 @@ jobs:
     steps:
       - checkout
       - coveralls/upload:
+          name: Test default version
           dry_run: true
           verbose: true
           measure: true
       - coveralls/upload:
+          name: Test latest version
+          dry_run: true
+          verbose: true
+          measure: true
+          coverage_reporter_version: latest
+      - coveralls/upload:
+          name: Test specific version
           verbose: true
           parallel: true
           coverage_file: test/main.c.gcov
+          coverage_reporter_version: v0.6.9
           fail_on_error: false
       - coveralls/upload:
+          name: Test invalid version
+          dry_run: true
+          verbose: true
+          coverage_reporter_version: invalid-version
+          fail_on_error: false
+      - run:
+          name: Verify coverage reporter version
+          command: |
+            INSTALLED_VERSION=$(coveralls --version | awk '{print $NF}')
+            EXPECTED_VERSION="<< parameters.coverage_reporter_version >>"
+            GITHUB_RELEASES_URL="https://github.com/coverallsapp/coverage-reporter/releases"
+
+            if [ "$EXPECTED_VERSION" = "latest" ]; then
+              echo "The version of coverage reporter chosen was 'latest' and the version installed is $INSTALLED_VERSION."
+              echo "Please check releases at $GITHUB_RELEASES_URL to ensure this is the latest release."
+            elif [ "$INSTALLED_VERSION" = "$EXPECTED_VERSION" ]; then
+              echo "Correct version ($EXPECTED_VERSION) installed"
+            else
+              echo "Version mismatch. Expected $EXPECTED_VERSION, but got $INSTALLED_VERSION"
+              echo "Please check releases at $GITHUB_RELEASES_URL for available versions."
+              exit 1
+            fi
+      - coveralls/upload:
+          name: Test parallel finished
           dry_run: true
           verbose: true
           parallel_finished: true

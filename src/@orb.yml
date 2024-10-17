@@ -107,6 +107,12 @@ commands:
         description: Whether to fail (exit code 1) on parsing or upload issues
         type: boolean
         default: true
+      coverage_reporter_version:
+        type: string
+        default: "latest"
+        description: >
+          Version of coverage-reporter to use. Prefix the version number with 'v'.
+          For example: v0.6.14. Set to 'latest' for the latest version.
     steps:
       - run:
           name: Upload Coverage Result To Coveralls
@@ -127,5 +133,6 @@ commands:
             COVERALLS_COVERAGE_FORMAT: << parameters.coverage_format >>
             COVERALLS_MEASURE: << parameters.measure >>
             COVERALLS_FAIL_ON_ERROR: << parameters.fail_on_error >>
+            COVERALLS_REPORTER_VERSION: << parameters.coverage_reporter_version >>
             COVERALLS_SOURCE_HEADER: circleci-orb
-          command: <<include(scripts/coveralls.sh)>>
+          command: \<<include(scripts/coveralls.sh) \>>
