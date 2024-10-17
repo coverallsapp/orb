@@ -9,6 +9,10 @@ jobs:
   command-tests:
     docker:
       - image: cimg/base:current
+    parameters:
+      coverage_reporter_version:
+        type: string
+        default: "latest"
     environment:
       COVERALLS_REPO_TOKEN: test-token
     steps:
