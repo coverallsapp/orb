@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Enable set -x debugging if COVERALLS_DEBUG or COVERALLS_VERBOSE (deprecated) is set to "1"
+if "${COVERALLS_VERBOSE}" == "1" ] || [ "${COVERALLS_DEBUG}" == "1" ]; then
+  set -x
+fi
+
 # Determine which version of coverage-reporter to download
 if [ -z "$COVERALLS_REPORTER_VERSION" ] || [ "$COVERALLS_REPORTER_VERSION" == "latest" ]; then
   asset_path="latest/download"
@@ -28,8 +33,9 @@ fi
 echo "Installed coverage reporter version:"
 ./coveralls --version || echo "Failed to retrieve version"
 
+# Pass the --debug flag to coverage-reporter if COVERALLS_DEBUG or COVERALLS_VERBOSE (deprecated) is set to "1"
 echo "Parsing args"
-if [ "${COVERALLS_VERBOSE}" == "1" ]; then
+if [ "${COVERALLS_VERBOSE}" == "1" ] || [ "${COVERALLS_DEBUG}" == "1" ]; then
   args="${args} --debug"
 fi
 

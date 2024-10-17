@@ -75,7 +75,11 @@ commands:
         type: string
         default: ''
       verbose:
-        description: Set to true for verbose output from the Coveralls API push.
+        description: Set to true for debug output. Deprecated, use debug instead.
+        type: boolean
+        default: false
+      debug:
+        description: Set to true for debug output. Replaces verbose.
         type: boolean
         default: false
       dry_run:
@@ -123,6 +127,7 @@ commands:
             COVERALLS_BASE_PATH: << parameters.base_path >>
             COVERALLS_REPO_TOKEN_ENV: << parameters.token >>
             COVERALLS_VERBOSE: << parameters.verbose >>
+            COVERALLS_DEBUG: << parameters.debug >>
             COVERALLS_COVERAGE_FILE: << parameters.coverage_file >>
             COVERALLS_COVERAGE_FILES: << parameters.coverage_files >>
             COVERALLS_CARRYFORWARD_FLAGS: << parameters.carryforward >>
