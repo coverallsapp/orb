@@ -19,22 +19,22 @@ jobs:
       - checkout
       - coveralls/upload:
           dry_run: true
-          verbose: true
+          debug: true
           measure: true
       - coveralls/upload:
           dry_run: true
-          verbose: true
+          debug: true
           measure: true
           coverage_reporter_version: latest
       - coveralls/upload:
-          verbose: true
+          debug: true
           parallel: true
           coverage_file: test/main.c.gcov
           coverage_reporter_version: v0.6.9
           fail_on_error: false
       - coveralls/upload:
           dry_run: true
-          verbose: true
+          debug: true
           coverage_reporter_version: invalid-version
           fail_on_error: false
       - run:
@@ -56,7 +56,7 @@ jobs:
             fi
       - coveralls/upload:
           dry_run: true
-          verbose: true
+          debug: true
           parallel_finished: true
 workflows:
   test-deploy:
