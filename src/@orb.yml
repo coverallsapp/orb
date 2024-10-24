@@ -119,6 +119,11 @@ commands:
           Version of coverage-reporter to use. Prefix the version number
           with 'v'. For example: v0.6.14. Set to 'latest' for the latest
           version.
+      coverage_reporter_platform:
+        type: enum
+        default: "x86_64"
+        description: "Platform of coverage-reporter to use. Supported values: x86_64 (default) and aarch64 (or arm64)"
+        enum: ["x86_64", "aarch64", "arm64"]
     steps:
       - run:
           name: Upload Coverage Results To Coveralls
@@ -141,5 +146,6 @@ commands:
             COVERALLS_MEASURE: << parameters.measure >>
             COVERALLS_FAIL_ON_ERROR: << parameters.fail_on_error >>
             COVERALLS_REPORTER_VERSION: << parameters.coverage_reporter_version >>  # yamllint disable-line rule:line-length
+            COVERALLS_REPORTER_PLATFORM: << parameters.coverage_reporter_platform >>  # yamllint disable-line rule:line-length
             COVERALLS_SOURCE_HEADER: circleci-orb
           command: <<include(scripts/coveralls.sh)>>

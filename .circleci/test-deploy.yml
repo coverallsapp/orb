@@ -17,26 +17,61 @@ jobs:
       COVERALLS_REPO_TOKEN: test-token
     steps:
       - checkout
+      # Test with all defaults (ie. no specified version or platform)
       - coveralls/upload:
           dry_run: true
           debug: true
           measure: true
+      # Test with parallel, coverage file and fail_on_error: false
+      - coveralls/upload:
+          verbose: true
+          parallel: true
+          coverage_file: test/main.c.gcov
+          fail_on_error: false
+      # test with parallel_finished
+      - coveralls/upload:
+          dry_run: true
+          verbose: true
+          parallel_finished: true
+      # Test with specified version (latest)
       - coveralls/upload:
           dry_run: true
           debug: true
           measure: true
           coverage_reporter_version: latest
+      # Test with specified version (v0.6.14)
       - coveralls/upload:
           debug: true
           parallel: true
           coverage_file: test/main.c.gcov
-          coverage_reporter_version: v0.6.9
+          coverage_reporter_version: v0.6.14
           fail_on_error: false
+      # Test with invalid version
       - coveralls/upload:
           dry_run: true
           debug: true
           coverage_reporter_version: invalid-version
           fail_on_error: false
+      # Test with specified platform (x86_64)
+      - coveralls/upload:
+          dry_run: true
+          debug: true
+          measure: true
+          coverage_reporter_platform: x86_64
+      # Test with specified platform (aarch64)
+      - coveralls/upload:
+          dry_run: true
+          debug: true
+          measure: true
+          coverage_reporter_platform: aarch64
+      # Test with unsupported platform
+      - coveralls/upload:
+          dry_run: true
+          debug: true
+          measure: true
+          coverage_reporter_platform: unsupported
+          fail_on_error: false
+      # Verify coverage reporter version
       - run:
           name: Verify coverage reporter version
           command: |
@@ -54,10 +89,6 @@ jobs:
               echo "Please check releases at $GITHUB_RELEASES_URL for available versions."
               exit 1
             fi
-      - coveralls/upload:
-          dry_run: true
-          debug: true
-          parallel_finished: true
 workflows:
   test-deploy:
     jobs:
