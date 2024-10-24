@@ -122,7 +122,9 @@ commands:
       coverage_reporter_platform:
         type: enum
         default: "x86_64"
-        description: "Platform of coverage-reporter to use. Supported values: x86_64 (default) and aarch64 (or arm64)"
+        description: >
+          Platform of coverage-reporter to use. Supported values: x86_64
+          (default) and aarch64 (or arm64).
         enum: ["x86_64", "aarch64", "arm64"]
     steps:
       - run:
