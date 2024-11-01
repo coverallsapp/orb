@@ -63,13 +63,12 @@ jobs:
           debug: true
           measure: true
           coverage_reporter_platform: aarch64
-      # Test with unsupported platform
+      # Test with specified platform (arm64)
       - coveralls/upload:
           dry_run: true
           debug: true
           measure: true
-          coverage_reporter_platform: unsupported
-          fail_on_error: false
+          coverage_reporter_platform: arm64
       # Verify coverage reporter version
       - run:
           name: Verify coverage reporter version
