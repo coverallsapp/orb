@@ -51,11 +51,11 @@ case "${COVERAGE_REPORTER_PLATFORM}" in
     ;;
 esac
 
-# Download the Coveralls binary and checksum file
+# Attempt to download the Coveralls binary and checksum file
 if ! curl -sLO "https://github.com/coverallsapp/coverage-reporter/releases/${asset_path}/${platform_filename}" ||
    ! curl -sLO "https://github.com/coverallsapp/coverage-reporter/releases/${asset_path}/coveralls-checksums.txt"; then
-  echo "Failed to download coveralls binary or checksum."
-  echo "This may be due to an invalid version: ${COVERAGE_REPORTER_VERSION}. Please check the available versions at https://github.com/coverallsapp/coverage-reporter/releases."
+  echo "Failed to download coveralls binary or checksum for version: ${COVERAGE_REPORTER_VERSION}."
+  echo "This may be due to an invalid version. Please check the available versions at https://github.com/coverallsapp/coverage-reporter/releases."
   [ "${COVERALLS_FAIL_ON_ERROR}" != "1" ] && exit 0
   exit 1
 fi
