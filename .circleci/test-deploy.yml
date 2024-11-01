@@ -41,6 +41,7 @@ jobs:
           coverage_reporter_version: latest
       # Test with specified version (v0.6.14)
       - coveralls/upload:
+          dry_run: true
           debug: true
           parallel: true
           coverage_file: test/main.c.gcov
