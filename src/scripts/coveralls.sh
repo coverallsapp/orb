@@ -6,10 +6,10 @@ if [ "${COVERALLS_DEBUG}" == "1" ] || [ "${COVERALLS_VERBOSE}" == "1" ]; then
 fi
 
 # Determine which version of coverage-reporter to download
-if [ -z "$COVERALLS_REPORTER_VERSION" ] || [ "$COVERALLS_REPORTER_VERSION" == "latest" ]; then
+if [ -z "$COVERAGE_REPORTER_VERSION" ] || [ "$COVERAGE_REPORTER_VERSION" == "latest" ]; then
   asset_path="latest/download"
 else
-  asset_path="download/${COVERALLS_REPORTER_VERSION}"
+  asset_path="download/${COVERAGE_REPORTER_VERSION}"
 fi
 
 # Determine the platform-specific filename:

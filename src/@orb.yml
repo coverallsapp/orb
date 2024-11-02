@@ -147,7 +147,7 @@ commands:
             COVERALLS_COVERAGE_FORMAT: << parameters.coverage_format >>
             COVERALLS_MEASURE: << parameters.measure >>
             COVERALLS_FAIL_ON_ERROR: << parameters.fail_on_error >>
-            COVERALLS_REPORTER_VERSION: << parameters.coverage_reporter_version >>  # yamllint disable-line rule:line-length
-            COVERALLS_REPORTER_PLATFORM: << parameters.coverage_reporter_platform >>  # yamllint disable-line rule:line-length
+            COVERAGE_REPORTER_VERSION: << parameters.coverage_reporter_version >>  # yamllint disable-line rule:line-length
+            COVERAGE_REPORTER_PLATFORM: << parameters.coverage_reporter_platform >>  # yamllint disable-line rule:line-length
             COVERALLS_SOURCE_HEADER: circleci-orb
           command: <<include(scripts/coveralls.sh)>>
