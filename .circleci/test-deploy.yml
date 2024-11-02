@@ -1,10 +1,13 @@
 ---
 version: 2.1
+
 orbs:
   orb-tools: circleci/orb-tools@12.1
+
 filters: &filters
   tags:
     only: /.*/
+
 jobs:
   command-tests:
     docker:
@@ -17,28 +20,34 @@ jobs:
       COVERALLS_REPO_TOKEN: test-token
     steps:
       - checkout
+      
       # Test with all defaults (ie. no specified version or platform)
+      - coveralls/upload:
+          dry_run: true
+          verbose: true
+          measure: true
+      
+      # Test with parallel, coverage file and fail_on_error: false
+      - coveralls/upload:
+          debug: true
+          parallel: true
+          measure: true
+          coverage_file: test/main.c.gcov
+          fail_on_error: false
+      
+      # test with parallel_finished
       - coveralls/upload:
           dry_run: true
           debug: true
           measure: true
-      # Test with parallel, coverage file and fail_on_error: false
-      - coveralls/upload:
-          verbose: true
-          parallel: true
-          coverage_file: test/main.c.gcov
-          fail_on_error: false
-      # test with parallel_finished
-      - coveralls/upload:
-          dry_run: true
-          verbose: true
           parallel_finished: true
+      
       # Test with specified version (latest)
       - coveralls/upload:
           dry_run: true
           debug: true
-          measure: true
           coverage_reporter_version: latest
+      
       # Test with specified version (v0.6.14)
       - coveralls/upload:
           dry_run: true
@@ -46,30 +55,34 @@ jobs:
           parallel: true
           coverage_file: test/main.c.gcov
           coverage_reporter_version: v0.6.14
+      
       # Test with invalid version
       - coveralls/upload:
           dry_run: true
           debug: true
           coverage_reporter_version: invalid-version
           fail_on_error: false
+      
       # Test with specified platform (x86_64)
       - coveralls/upload:
           dry_run: true
           debug: true
-          measure: true
           coverage_reporter_platform: x86_64
+      
       # Test with specified platform (aarch64)
       - coveralls/upload:
           dry_run: true
           debug: true
-          measure: true
           coverage_reporter_platform: aarch64
+          fail_on_error: false
+      
       # Test with specified platform (arm64)
       - coveralls/upload:
           dry_run: true
           debug: true
-          measure: true
           coverage_reporter_platform: arm64
+          fail_on_error: false
+      
       # Verify coverage reporter version
       - run:
           name: Verify coverage reporter version
@@ -88,11 +101,28 @@ jobs:
               echo "Please check releases at $GITHUB_RELEASES_URL for available versions."
               exit 1
             fi
+  
+  # Standalone ARM test
+  arm-test:
+    machine:
+      image: ubuntu-2004:202101-01
+      arm: true
+    steps:
+      - checkout
+      # Test with aarch64 platform on ARM machine
+      - coveralls/upload:
+          dry_run: true
+          debug: true
+          coverage_reporter_platform: aarch64
+          coverage_reporter_version: v0.6.15
+
 workflows:
   test-deploy:
     jobs:
       # Make sure to include "filters: *filters" in every test job you want to run as part of your deployment.
       - command-tests:
+          filters: *filters
+      - arm-test:
           filters: *filters
       - orb-tools/pack:
           filters: *filters
@@ -103,6 +133,7 @@ workflows:
           requires:
             - orb-tools/pack
             - command-tests
+            - arm-test
           context: publishing
           filters:
             branches:
