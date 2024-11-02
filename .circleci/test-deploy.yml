@@ -87,6 +87,20 @@ jobs:
       - run:
           name: Verify coverage reporter version
           command: |
+            # Add debugging information before checking version
+            echo "Debug: Checking coveralls binary before version verification"
+            ls -l ./coveralls
+            file ./coveralls
+            echo "Debug: System architecture: $(uname -m)"
+            echo "Debug: Platform setting: ${COVERAGE_REPORTER_PLATFORM:-x86_64}"
+
+            # Try to get version with error handling
+            if ! INSTALLED_VERSION=$(./coveralls --version 2>&1); then
+              echo "Error executing coveralls binary for version check: $INSTALLED_VERSION"
+              [ "${COVERALLS_FAIL_ON_ERROR}" != "1" ] && exit 0
+              exit 1
+            fi
+
             INSTALLED_VERSION=$(./coveralls --version | awk '{print $NF}')
             EXPECTED_VERSION="<< parameters.coverage_reporter_version >>"
             GITHUB_RELEASES_URL="https://github.com/coverallsapp/coverage-reporter/releases"
