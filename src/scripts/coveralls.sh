@@ -99,12 +99,15 @@ fi
 # Check architecture compatibility before attempting any execution
 if [ -f ./coveralls ]; then
   SYSTEM_ARCH=$(uname -m)
-  PLATFORM="${COVERAGE_REPORTER_PLATFORM:-x86_64}" # Default to x86_64 if not set
-  if [[ "${PLATFORM}" == "aarch64" && "${SYSTEM_ARCH}" != "aarch64" ]] || \
-     [[ "${PLATFORM}" == "x86_64" && "${SYSTEM_ARCH}" != "x86_64" ]]; then
-    echo "Error: Architecture mismatch. You specified coverage_reporter_platform: ${PLATFORM}, but this runner is ${SYSTEM_ARCH}."
-    [ "${COVERALLS_FAIL_ON_ERROR}" != "1" ] && exit 0
-    exit 1
+  # For versions >= v0.6.15, we need to check architecture even when platform isn't specified
+  if version_ge "$COVERAGE_REPORTER_VERSION" "v0.6.15"; then
+    if [[ -z "${COVERAGE_REPORTER_PLATFORM}" && "${SYSTEM_ARCH}" != "x86_64" ]] || \
+       [[ "${COVERAGE_REPORTER_PLATFORM}" == "aarch64" && "${SYSTEM_ARCH}" != "aarch64" ]] || \
+       [[ "${COVERAGE_REPORTER_PLATFORM}" == "x86_64" && "${SYSTEM_ARCH}" != "x86_64" ]]; then
+      echo "Error: Architecture mismatch. Platform: ${COVERAGE_REPORTER_PLATFORM:-x86_64}, Runner: ${SYSTEM_ARCH}"
+      [ "${COVERALLS_FAIL_ON_ERROR}" != "1" ] && exit 0
+      exit 1
+    fi
   fi
 fi
 
