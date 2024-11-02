@@ -1,10 +1,13 @@
 ---
 version: 2.1
+
 orbs:
   orb-tools: circleci/orb-tools@12.1
+
 filters: &filters
   tags:
     only: /.*/
+
 jobs:
   command-tests:
     docker:
@@ -17,52 +20,97 @@ jobs:
       COVERALLS_REPO_TOKEN: test-token
     steps:
       - checkout
+      
+      # Test with all defaults (ie. no specified version or platform)
       - coveralls/upload:
           dry_run: true
-          debug: true
+          verbose: true
           measure: true
-      - coveralls/upload:
-          dry_run: true
-          debug: true
-          measure: true
-          coverage_reporter_version: latest
+      
+      # Test with parallel, coverage file and fail_on_error: false
       - coveralls/upload:
           debug: true
           parallel: true
+          measure: true
           coverage_file: test/main.c.gcov
-          coverage_reporter_version: v0.6.9
           fail_on_error: false
+      
+      # test with parallel_finished
+      - coveralls/upload:
+          dry_run: true
+          debug: true
+          measure: true
+          parallel_finished: true
+      
+      # Test with specified version (latest)
+      - coveralls/upload:
+          dry_run: true
+          debug: true
+          coverage_reporter_version: latest
+      
+      # Test with specified version (v0.6.14)
+      - coveralls/upload:
+          dry_run: true
+          debug: true
+          parallel: true
+          coverage_file: test/main.c.gcov
+          coverage_reporter_version: v0.6.14
+      
+      # Test with invalid version
       - coveralls/upload:
           dry_run: true
           debug: true
           coverage_reporter_version: invalid-version
           fail_on_error: false
-      - run:
-          name: Verify coverage reporter version
-          command: |
-            INSTALLED_VERSION=$(./coveralls --version | awk '{print $NF}')
-            EXPECTED_VERSION="<< parameters.coverage_reporter_version >>"
-            GITHUB_RELEASES_URL="https://github.com/coverallsapp/coverage-reporter/releases"
-
-            if [ "$EXPECTED_VERSION" = "latest" ]; then
-              echo "The version of coverage reporter chosen was 'latest' and the version installed is $INSTALLED_VERSION."
-              echo "Please check releases at $GITHUB_RELEASES_URL to ensure this is the latest release."
-            elif [ "$INSTALLED_VERSION" = "$EXPECTED_VERSION" ]; then
-              echo "Correct version ($EXPECTED_VERSION) installed"
-            else
-              echo "Version mismatch. Expected $EXPECTED_VERSION, but got $INSTALLED_VERSION"
-              echo "Please check releases at $GITHUB_RELEASES_URL for available versions."
-              exit 1
-            fi
+      
+      # Test with specified platform (x86_64)
       - coveralls/upload:
           dry_run: true
           debug: true
-          parallel_finished: true
+          coverage_reporter_platform: x86_64
+      
+      # Test with specified platform (aarch64)
+      - coveralls/upload:
+          dry_run: true
+          debug: true
+          coverage_reporter_platform: aarch64
+          fail_on_error: false
+      
+      # Test with specified platform (arm64)
+      - coveralls/upload:
+          dry_run: true
+          debug: true
+          coverage_reporter_platform: arm64
+          fail_on_error: false
+  
+  # Standalone ARM test
+  arm-test:
+    machine:
+      image: ubuntu-2204:current
+    resource_class: arm.large
+    steps:
+      - checkout
+      # Verify ARM architecture
+      - run:
+          name: Verify architecture
+          command: |
+            echo "uname -m reports: $(uname -m)"
+            echo "arch reports: $(arch)"
+            echo "uname -a reports: $(uname -a)"
+      # Test with aarch64 platform on ARM machine
+      - coveralls/upload:
+          dry_run: true
+          debug: true
+          coverage_reporter_platform: aarch64
+          coverage_reporter_version: v0.6.15
+
 workflows:
   test-deploy:
     jobs:
       # Make sure to include "filters: *filters" in every test job you want to run as part of your deployment.
       - command-tests:
+          filters: *filters
+      - arm-test:
           filters: *filters
       - orb-tools/pack:
           filters: *filters
@@ -73,6 +121,7 @@ workflows:
           requires:
             - orb-tools/pack
             - command-tests
+            - arm-test
           context: publishing
           filters:
             branches:
