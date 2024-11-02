@@ -96,6 +96,18 @@ if ! tar -xzf "${platform_filename}"; then
   exit 1
 fi
 
+# Check runner architecture, before any execution attempts, to deliver a helpful error message before a possible shell execution failure:
+if [ -f ./coveralls ]; then
+  # Get system architecture
+  SYSTEM_ARCH=$(uname -m)
+  if [[ "${COVERAGE_REPORTER_PLATFORM}" == "aarch64" && "${SYSTEM_ARCH}" != "aarch64" ]] || \
+     [[ "${COVERAGE_REPORTER_PLATFORM}" == "x86_64" && "${SYSTEM_ARCH}" != "x86_64" ]]; then
+    echo "Error: Architecture mismatch. You specified coverage_reporter_platform: ${COVERAGE_REPORTER_PLATFORM}, but this runner is ${SYSTEM_ARCH}."
+    [ "${COVERALLS_FAIL_ON_ERROR}" != "1" ] && exit 0
+    exit 1
+  fi
+fi
+
 # Ensure the binary exists before attempting to run it
 if [ ! -f ./coveralls ]; then
   echo "Coveralls binary not found after extraction."
@@ -104,7 +116,7 @@ if [ ! -f ./coveralls ]; then
 fi
 
 # Output the version of the installed coverage reporter
-echo "Installed coverage reporter version:"
+echo "Installed coverage reporter version: ${COVERAGE_REPORTER_VERSION}"
 ./coveralls --version || echo "Failed to retrieve version"
 
 # Pass the --debug flag to coverage-reporter if COVERALLS_DEBUG or COVERALLS_VERBOSE (deprecated) is set to "1"
