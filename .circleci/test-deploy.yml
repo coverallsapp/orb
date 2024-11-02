@@ -106,7 +106,8 @@ jobs:
   arm-test:
     machine:
       image: ubuntu-2004:202101-01
-      arm: true
+      docker_layer_caching: true  # optional
+    resource_class: arm.medium    # specify ARM resource class
     steps:
       - checkout
       # Test with aarch64 platform on ARM machine
