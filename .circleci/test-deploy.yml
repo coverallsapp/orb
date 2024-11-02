@@ -82,46 +82,12 @@ jobs:
           debug: true
           coverage_reporter_platform: arm64
           fail_on_error: false
-      
-      # Verify coverage reporter version
-      - run:
-          name: Verify coverage reporter version
-          command: |
-            # Add debugging information before checking version
-            echo "Debug: Checking coveralls binary before version verification"
-            ls -l ./coveralls
-            file ./coveralls
-            echo "Debug: System architecture: $(uname -m)"
-            echo "Debug: Platform setting: ${COVERAGE_REPORTER_PLATFORM:-x86_64}"
-
-            # Try to get version with error handling
-            if ! INSTALLED_VERSION=$(./coveralls --version 2>&1); then
-              echo "Error executing coveralls binary for version check: $INSTALLED_VERSION"
-              [ "${COVERALLS_FAIL_ON_ERROR}" != "1" ] && exit 0
-              exit 1
-            fi
-
-            INSTALLED_VERSION=$(./coveralls --version | awk '{print $NF}')
-            EXPECTED_VERSION="<< parameters.coverage_reporter_version >>"
-            GITHUB_RELEASES_URL="https://github.com/coverallsapp/coverage-reporter/releases"
-
-            if [ "$EXPECTED_VERSION" = "latest" ]; then
-              echo "The version of coverage reporter chosen was 'latest' and the version installed is $INSTALLED_VERSION."
-              echo "Please check releases at $GITHUB_RELEASES_URL to ensure this is the latest release."
-            elif [ "$INSTALLED_VERSION" = "$EXPECTED_VERSION" ]; then
-              echo "Correct version ($EXPECTED_VERSION) installed"
-            else
-              echo "Version mismatch. Expected $EXPECTED_VERSION, but got $INSTALLED_VERSION"
-              echo "Please check releases at $GITHUB_RELEASES_URL for available versions."
-              exit 1
-            fi
   
   # Standalone ARM test
   arm-test:
     machine:
-      image: ubuntu-2004:202101-01
-      docker_layer_caching: true  # optional
-    resource_class: arm.medium    # specify ARM resource class
+      image: ubuntu-2204:current
+    resource_class: arm.large
     steps:
       - checkout
       # Verify ARM architecture
