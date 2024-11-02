@@ -96,7 +96,7 @@ if ! tar -xzf "${platform_filename}"; then
   exit 1
 fi
 
-# Check runner architecture, before any execution attempts, to deliver a helpful error message before a possible shell execution failure:
+# Check runner architecture for platform match, before any execution attempts, to deliver a helpful error message before a possible shell execution failure:
 if [ -f ./coveralls ]; then
   # Get system architecture
   SYSTEM_ARCH=$(uname -m)
