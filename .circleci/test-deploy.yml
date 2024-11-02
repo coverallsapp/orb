@@ -110,12 +110,13 @@ jobs:
     resource_class: arm.medium    # specify ARM resource class
     steps:
       - checkout
+      # Verify ARM architecture
       - run:
-        name: Verify architecture
-        command: |
-          echo "uname -m reports: $(uname -m)"
-          echo "arch reports: $(arch)"
-          echo "uname -a reports: $(uname -a)"
+          name: Verify architecture
+          command: |
+            echo "uname -m reports: $(uname -m)"
+            echo "arch reports: $(arch)"
+            echo "uname -a reports: $(uname -a)"
       # Test with aarch64 platform on ARM machine
       - coveralls/upload:
           dry_run: true
