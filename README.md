@@ -131,6 +131,24 @@ git tag vX.Y.Z
 git push origin vX.Y.Z
 ```
 
+## Our Open-Source Promise
+
+Coveralls.io is always free for open-source projects. Create a [free account](https://coveralls.io/pricing) for your (public) repo at Coveralls, then use one of our [official integrations](https://docs.coveralls.io/integrations#official-integrations): [coverage-reporter](https://github.com/coverallsapp/coverage-reporter), [github-action](https://github.com/coverallsapp/github-action), or [orb](https://github.com/coverallsapp/orb) to upload coverage to the [Coveralls API](https://docs.coveralls.io/api-introduction).
+
+Additionally, over 30 [community-created language integrations](https://docs.coveralls.io/integrations#language-integrations) exist for coveralls, which you can find a list of [here](https://docs.coveralls.io/integrations#language-integrations).
+
+## Getting help
+
+Issues? Questions? Reach out to us [here](https://github.com/coverallsapp/coverage-reporter/issues), or at support@coveralls.io.
+
+## Contributing
+
+[Bug reports](https://github.com/coverallsapp/coverage-reporter/issues) and [pull requests](https://github.com/coverallsapp/coverage-reporter/pulls) are welcome. 
+
 ## License
 
-This project is licensed under the terms of the [MIT license](/LICENSE).
+The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+
+## Code of Conduct
+
+Contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
