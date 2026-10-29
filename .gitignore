@@ -1,2 +1,6 @@
 .idea
 orb.yml
+
+# Local scratch: screenshots, context transfer docs, session prompts
+tmp/
+.DS_Store
