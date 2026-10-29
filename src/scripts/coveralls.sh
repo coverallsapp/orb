@@ -51,11 +51,31 @@ case "${COVERAGE_REPORTER_PLATFORM}" in
     ;;
 esac
 
+# Download settings (seconds / attempts). Without these, a stalled connection to GitHub can hang
+# until CircleCI's step-level no_output_timeout kills the step, which fails the job even when
+# fail_on_error is false (see https://github.com/coverallsapp/orb/issues/51).
+# Worst case is roughly (1 + retries) * max_time, which stays under CircleCI's default 10m timeout.
+# Each can be overridden via an environment variable if your network needs more headroom.
+download_connect_timeout="${COVERALLS_DOWNLOAD_CONNECT_TIMEOUT:-10}"
+download_max_time="${COVERALLS_DOWNLOAD_MAX_TIME:-60}"
+download_retries="${COVERALLS_DOWNLOAD_RETRIES:-3}"
+
+# Download a release asset into the current directory, failing on HTTP errors and timing out on stalls
+download_asset() {
+  curl -sSfLO \
+    --connect-timeout "${download_connect_timeout}" \
+    --max-time "${download_max_time}" \
+    --retry "${download_retries}" \
+    --retry-delay 2 \
+    "$1"
+}
+
 # Attempt to download the Coveralls binary and checksum file
-if ! curl -sfLO "https://github.com/coverallsapp/coverage-reporter/releases/${asset_path}/${platform_filename}" ||
-   ! curl -sfLO "https://github.com/coverallsapp/coverage-reporter/releases/${asset_path}/coveralls-checksums.txt"; then
+if ! download_asset "https://github.com/coverallsapp/coverage-reporter/releases/${asset_path}/${platform_filename}" ||
+   ! download_asset "https://github.com/coverallsapp/coverage-reporter/releases/${asset_path}/coveralls-checksums.txt"; then
   echo "Failed to download coveralls binary or checksum for version: ${COVERAGE_REPORTER_VERSION}."
-  echo "This may be due to an invalid version. Please check the available versions at https://github.com/coverallsapp/coverage-reporter/releases."
+  echo "This may be due to an invalid version, or a network problem (timeout) reaching github.com."
+  echo "Please check the available versions at https://github.com/coverallsapp/coverage-reporter/releases."
   [ "${COVERALLS_FAIL_ON_ERROR}" != "1" ] && exit 0
   exit 1
 fi
